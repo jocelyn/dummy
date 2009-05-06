@@ -12,10 +12,9 @@ create
 
 feature {NONE} -- Initialization
 
-	make (a_uuid: like uuid; a_location: like location)
+	make (a_uuid: like uuid)
 		do
 			uuid := a_uuid
-			location := a_location
 			create messages.make (100)
 			messages.compare_objects
 		end
@@ -23,8 +22,6 @@ feature {NONE} -- Initialization
 feature -- Access
 
 	uuid: STRING
-
-	location: STRING
 
 	messages: HASH_TABLE [POP3_MESSAGE, STRING]
 
@@ -45,7 +42,6 @@ feature -- Access
 				l_messages.after
 			loop
 				m := l_messages.item_for_iteration
-				check Result [m.index] = Void end
 				Result [m.index] := m
 --				Result.force ()
 				l_messages.forth
@@ -97,8 +93,9 @@ feature -- Basic operations
 				if not l_uuids.has (l_uid) then
 					record_offline (mesgs.item_for_iteration)
 					mesgs.remove (l_uid)
+				else
+					mesgs.forth
 				end
-				mesgs.forth
 			end
 		end
 
@@ -115,13 +112,9 @@ feature -- Basic operations
 			end
 			counter := counter + 1
 			l_offline.force ([counter, a_msg])
+			a_msg.reset_index
 		end
 
 feature -- Element change
-
-	set_location (v: like location)
-		do
-			location := v
-		end
 
 end

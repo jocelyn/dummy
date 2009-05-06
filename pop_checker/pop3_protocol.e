@@ -429,6 +429,7 @@ feature -- Status setting
 			s, m: detachable STRING
 			h: detachable ARRAYED_LIST [STRING]
 			b: BOOLEAN
+			lines: detachable LIST [STRING]
 		do
 			l_socket := main_socket
 			check l_socket_attached: l_socket /= Void end
@@ -448,7 +449,8 @@ feature -- Status setting
 				debug
 					io.put_string ("Get message: " + s.substring (4, s.count) + "%N")
 				end
-				if attached multiple_line_answer as lines then
+				lines := multiple_line_answer
+				if lines /= Void then
 					from
 						create h.make (10)
 						lines.start
@@ -468,10 +470,27 @@ feature -- Status setting
 						lines.forth
 					end
 					a_msg.set_header_lines (h)
+--				end
+--				if a_nb_of_lines /= 0 then
+--					lines := multiple_line_answer
+--					if lines /= Void then
+--						create m.make_empty
+--						from
+--							lines.start
+--						until
+--							lines.after
+--						loop
+--							s := lines.item
+--							if s /= Void then
+--								m.append_string (s + "%N")
+--							end
+--							lines.forth
+--						end
+--					end
 					a_msg.set_message (m)
-					if a_nb_of_lines >= 0 then
-						a_msg.set_truncated (a_nb_of_lines)
-					end
+				end
+				if a_nb_of_lines >= 0 then
+					a_msg.set_truncated (a_nb_of_lines)
 				end
 			else
 				error_code := Wrong_command
@@ -592,6 +611,7 @@ feature {NONE} -- Implementation
 		local
 			l_socket: like main_socket
 			s: detachable STRING
+			l_stop: BOOLEAN
 		do
 			l_socket := main_socket
 			check l_socket /= Void end
@@ -599,15 +619,49 @@ feature {NONE} -- Implementation
 				from
 					create {ARRAYED_LIST [STRING]} Result.make (100)
 				until
-					error or else (s /= Void and then s.is_equal ("."))
+					error or l_stop
 				loop
 					check_socket (l_socket, Read_only)
 					if not error then
 						l_socket.read_line
-						s := l_socket.last_string
+						s := l_socket.last_string.string
 						remove_trailing_r (s)
 						if s.count = 1 and then s[1] = '.' then
-							-- ignore last entry
+							l_stop := True
+						else
+							Result.force (s)
+						end
+					end
+				end
+			end
+		end
+
+	multiple_line_answer2 (stop_at_first_dot_line: BOOLEAN): detachable LIST [STRING]
+		local
+			l_stop_at_dot_line: BOOLEAN
+			l_socket: like main_socket
+			s: detachable STRING
+		do
+			l_stop_at_dot_line := stop_at_first_dot_line
+			l_socket := main_socket
+			check l_socket /= Void end
+			if not error then
+				from
+					create {ARRAYED_LIST [STRING]} Result.make (100)
+				until
+					error or s /= Void
+				loop
+					check_socket (l_socket, Read_only)
+					if not error then
+						l_socket.read_line
+						s := l_socket.last_string.string
+						remove_trailing_r (s)
+						if s.count = 1 and then s[1] = '.' then
+							if not l_stop_at_dot_line then
+								l_stop_at_dot_line := True
+							else
+								s := Void
+							end
 						else
 							Result.force (s)
 						end

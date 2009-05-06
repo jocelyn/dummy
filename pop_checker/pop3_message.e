@@ -126,6 +126,11 @@ feature -- Element change
 			index := a_index
 		end
 
+	reset_index
+		do
+			index := 0
+		end
+
 	set_truncated (a_nb_of_lines: INTEGER)
 		do
 			truncated_lines := a_nb_of_lines

@@ -20,6 +20,7 @@ feature {NONE} -- Initialization
 			port := a_port
 			username := a_username
 			password := a_password
+			enable
 		end
 
 	make_from_location (a_location: STRING; a_username: detachable STRING; a_password: STRING)
