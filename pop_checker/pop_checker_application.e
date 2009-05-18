@@ -163,6 +163,9 @@ feature {NONE} -- Initialization
 				f.put_string (html_footer (Void))
 				f.close
 			end
+			if attached get ("ComSpec") as l_comspec then
+				launch (l_comspec + " /C %"start " + fn + "%"")
+			end
 		end
 
 	manage_profiles (a_profiles: like profiles)
@@ -640,7 +643,21 @@ feature {NONE} -- Initialization
 						end
 
 						if attached l_mesg.header_date as l_text then
-							html_output.put_string (" <span class=%"mdate%">" + l_text + "</span>")
+							if attached l_mesg.header_date_time as l_dt then
+								html_output.put_string (" <span class=%"mdate%">")
+								html_output.put_integer (l_dt.year)
+								html_output.put_character ('/')
+								html_output.put_integer (l_dt.month)
+								html_output.put_character ('/')
+								html_output.put_integer (l_dt.day)
+								html_output.put_character ('-')
+								html_output.put_integer (l_dt.hour)
+								html_output.put_character (':')
+								html_output.put_integer (l_dt.minute)
+								html_output.put_string ("</span>")
+							else
+								html_output.put_string (" <span class=%"mdate%">" + l_text + "</span>")
+							end
 						end
 						html_output.put_string ("</span>")
 						if attached l_mesg.uid as l_text then
@@ -704,5 +721,7 @@ feature -- Access
 		do
 			Result := mail_checker_data.data (a_uuid)
 		end
+
+feature -- Helper
 
 end

@@ -58,6 +58,13 @@ feature -- Access
 			Result := headers.item (h)
 		end
 
+	header_date_time: detachable DATE_TIME
+		do
+			if attached header_date as d then
+				Result := date_time_from_string (d)
+			end
+		end
+
 feature -- Access: header
 
 	header_subject: like header do Result := header ("Subject") end
@@ -200,6 +207,100 @@ feature -- Element change
 	reset_message
 		do
 			message := Void
+		end
+
+feature {NONE} -- Implementation
+
+	locale_manager: I18N_LOCALE_MANAGER
+		once
+			create Result.make (Operating_environment.current_directory_name_representation)
+		end
+
+	locale_timezone_offset: INTEGER
+		do
+--			if attached locale_manager.locale (create {I18N_LOCALE_ID}.make_from_string ("LL-RR")) as locale then
+--				print (locale.out)
+--			end
+			Result := 0
+		end
+
+	date_time_regexp: RX_PCRE_REGULAR_EXPRESSION
+		once
+			create Result.make
+			Result.set_caseless (False)
+			Result.set_multiline (False)
+			Result.compile ("[a-zA-Z]+,\s{1}([0-3]?[0-9]) ([A-Z][a-z][a-z]) ([0-9]{4}) ([0-2][0-9]):([0-5][0-9]):([0-5][0-9])\s{1}([+-][0-9]{2})([0-9]{2})")
+		end
+
+	date_time_from_string (a_text: STRING): detachable DATE_TIME
+			--| "18 May 2009 11:02:22 -0000"
+			--| "Mon, 18 May 2009 11:00:03 +0000"
+		require
+			a_text_attached: a_text /= Void
+		local
+			s,t: STRING
+--			p: INTEGER
+			hoff,moff: INTEGER
+			r: like date_time_regexp
+			d,m,y: INTEGER
+			h,min,sec: INTEGER
+		do
+			r := date_time_regexp
+			r.match (a_text)
+			if r.has_matched then
+				d := r.captured_substring (1).to_integer
+				s := r.captured_substring (2)
+				if     s ~ "Jan" then m := 1
+				elseif s ~ "Feb" then m := 2
+				elseif s ~ "Mar" then m := 3
+				elseif s ~ "Apr" then m := 4
+				elseif s ~ "May" then m := 5
+				elseif s ~ "Jun" then m := 6
+				elseif s ~ "Jui" then m := 7
+				elseif s ~ "Aug" then m := 8
+				elseif s ~ "Sep" then m := 9
+				elseif s ~ "Oct" then m := 10
+				elseif s ~ "Nov" then m := 11
+				elseif s ~ "Dec" then m := 12
+				else check False end
+				end
+				y := r.captured_substring (3).to_integer
+				h := r.captured_substring (4).to_integer
+				min := r.captured_substring (5).to_integer
+				sec := r.captured_substring (6).to_integer
+				create Result.make (y, m, d, h, min, sec)
+
+				if r.match_count > 6 then
+					hoff := r.captured_substring (7).to_integer
+					moff := r.captured_substring (8).to_integer
+					Result.hour_add (-hoff)
+					Result.minute_add (-moff)
+				end
+--			else
+--				create s.make_from_string (a_text)
+--				p := s.index_of (',', 1)
+--				if p > 0 then
+--					s := s.substring (p + 2, s.count)
+--				end
+--				p := s.last_index_of ('-', s.count)
+--				if p = 0 then
+--					p := s.last_index_of ('+', s.count)
+--				end
+--				if p > 0 then
+--					t := s.substring (p, s.count)
+--					if t.count = 5 then
+--						t.keep_head (3)
+--						if t.is_integer_32 then
+--							hoff := t.to_integer
+--						end
+--					end
+--					s.keep_head (p - 2)
+--				end
+--				create Result.make_from_string (s, "[0]dd MMM yyyy hh:[0]mi:[0]ss")
+--				if hoff /= 0 then
+--					Result.hour_add (-hoff)
+--				end
+			end
 		end
 
 end
