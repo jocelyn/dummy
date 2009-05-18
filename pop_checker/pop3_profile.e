@@ -69,6 +69,7 @@ feature {NONE} -- Initialization
 			else
 				host := s
 			end
+			enable
 		ensure
 			host_attached: host /= Void
 		end
