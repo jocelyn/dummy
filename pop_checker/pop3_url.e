@@ -12,7 +12,8 @@ class POP3_URL
 inherit
 	NETWORK_RESOURCE_URL
 		redefine
-			location
+			location,
+			analyze
 		end
 
 create
@@ -23,7 +24,7 @@ feature -- Access
 	Service: STRING = "pop"
 			-- Name of service (Answer: "pop")
 
-	apop_authentication: BOOLEAN
+	authentication: detachable STRING
 			-- Use APOP for authentication
 
 feature -- Status report
@@ -36,6 +37,12 @@ feature -- Status report
 
 	Has_username: BOOLEAN = True;
 			-- Can address contain a username?
+
+	is_valid (a_username_required: BOOLEAN): BOOLEAN
+			-- rfc2384: pop://<user>;auth=<auth>@<host>:<port>
+		do
+			Result := is_correct and then (not a_username_required or else username /= Void)
+		end
 
 feature -- Access
 
@@ -51,11 +58,11 @@ feature -- Access
 			if not username.is_empty then
 				create s.make_from_string (username)
 			end
-			if apop_authentication then
+			if attached authentication as l_auth then
 				if s = Void then
 					create s.make_empty
 				end
-				s.append_string (";AUTH=+APOP")
+				s.append_string (";AUTH=" + l_auth)
 			end
 			if s /= Void then
 				Result.append_string (s)
@@ -65,6 +72,29 @@ feature -- Access
 			if port /= 0 and port /= default_port then
 				Result.append_character (':')
 				Result.append_integer (port)
+			end
+		end
+
+feature {NONE} -- Basic operations
+
+	analyze
+			-- Analyze address.
+		local
+			l_username: like username
+			p: INTEGER
+			s: STRING
+		do
+			Precursor
+			l_username := username
+			if l_username /= Void and then not l_username.is_empty then
+				p := l_username.substring_index (";AUTH=", 1)
+				if p > 0 then
+					s := l_username.substring (p + 6, l_username.count)
+					if s /= Void and then not s.is_empty then
+						authentication := s.string
+					end
+					l_username.keep_head (p - 1)
+				end
 			end
 		end
 

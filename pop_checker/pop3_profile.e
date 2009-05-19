@@ -26,7 +26,7 @@ feature {NONE} -- Initialization
 	make_from_location (a_location: STRING; a_username: detachable STRING; a_password: STRING)
 			-- rfc2384: pop://<user>;auth=<auth>@<host>:<port>
 		require
-			valid_location: (create {POP3_LOCATION}.make (a_location)).is_valid (a_username = Void)
+			valid_location: (create {POP3_URL}.make (a_location)).is_valid (a_username = Void)
 		local
 			p,q,r: INTEGER
 			a,s: detachable STRING

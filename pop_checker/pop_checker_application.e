@@ -45,10 +45,10 @@ feature {NONE} -- Initialization
 						n := Void
 					end
 				end
-				if n /= Void and then attached (create {POP3_LOCATION}.make (n)) as l_pop3_location and then l_pop3_location.is_valid (False) then
+				if n /= Void and then attached (create {POP3_URL}.make (n)) as l_pop3_location and then l_pop3_location.is_valid (False) then
 					io.put_string ("Location: " + n + "%N")
 					l_username := l_pop3_location.username
-					if l_username = Void then
+					if l_username.is_empty then
 						io.put_string ("Username?")
 						io.read_line
 						l_username := io.last_string.string
@@ -57,7 +57,7 @@ feature {NONE} -- Initialization
 					io.read_line
 					l_password := io.last_string.string
 
-					check l_username /= Void and l_password /= Void end
+					check not l_username.is_empty and not l_password.is_empty end
 					create l_profile.make_from_location (n, l_username, l_password)
 					l_profile.enable
 					mail_checker_data.set_profile (l_profile)
@@ -173,7 +173,7 @@ feature {NONE} -- Initialization
 			a_profiles_attached: a_profiles /= Void
 		local
 			l_profile: detachable POP3_PROFILE
-			l_location: POP3_LOCATION
+			l_location: POP3_URL
 			s, n, q: detachable STRING
 			i,m: INTEGER
 			profs: ARRAY [POP3_PROFILE]
@@ -256,7 +256,7 @@ feature {NONE} -- Initialization
 							print ("Password ?")
 							io.read_line
 
-							create l_profile.make_from_location (l_location.string, s, io.last_string.string)
+							create l_profile.make_from_location (l_location.location, s, io.last_string.string)
 							display_profile (l_profile, 1)
 							mail_checker_data.set_profile (l_profile)
 						else
