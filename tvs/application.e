@@ -21,17 +21,52 @@ feature {NONE} -- Initialization
 	make
 			-- Run application.
 		local
+--			ta: TYPE [ANY]
+--			ts: TYPE [STRING_8]
+--			ti: TYPE [INTEGER]
+
+			ls: LINKED_SET [INTEGER]
 			attached_att_precursor: ATTACHED_ATT_PRECURSOR
 --			foo: FOO [STRING]
 --			a_one: A_ONE
 --			a_two: A_TWO
+			a_string: STRING
 			s: detachable STRING
 
 			arr: ARRAY [INTEGER]
+			arrb: ARRAY [BOOLEAN]
+			arrs: ARRAY [STRING]
+			any: ANY
+--			f: RAW_FILE
+			n: ?STRING
+--			tu: TUPLE [b: BOOLEAN; s: STRING]
 		do
+--			ta := {ANY}
+--			ts := {STRING_8}
+--			ti := {INTEGER}
+			create ls.make
+			ls.put (1)
+			ls.start
+			print (ls.item)
+--			create tu
+--			a_string := tu.s
+--			a_string.to_upper
+
+			any := <<1,2,3>>
+			n := out
+			if n /= Void and then
+				attached {STRING} create {STRING}.make_from_string (n) as l_string and then
+				l_string.is_equal (n)
+			then
+				do_nothing
+			end
+
+--			create f.make_open_read ("toto.fake")
 			create attached_att_precursor.make
 			make_from_string ("abc")
 			print (att_string_count)
+
+			s := "abc"
 
 			if test_breakable then
 			end
@@ -40,6 +75,12 @@ feature {NONE} -- Initialization
 			test_ot
 
 			arr := << 1,2,3>>
+			arrb := << True, False, True>>
+			arrs := << "abc", "DEF", "gef">>
+
+			any := arr.linear_representation
+			any := arrb.linear_representation
+			any := arrs.linear_representation
 
 			if attached {INTEGER_REF} arr[1] as ir then
 				print ("ir%N")
@@ -53,6 +94,11 @@ feature {NONE} -- Initialization
 			s := test_string (s)
 
 --			create foo.make
+		end
+
+	the_tuple: TUPLE [b: BOOLEAN; s: STRING]
+		do
+			create Result
 		end
 
 	test_formatter
@@ -69,7 +115,7 @@ feature {NONE} -- Initialization
 		require else
 			is_true: attached current as c and then c.out.count > 0
 		local
-			a: detachable ANY
+			a: detachable PROCEDURE [ANY, TUPLE [STRING]]
 			j: INTEGER
 		do
 			Result := Precursor and out /= Void and then out.string.count.out.count > 0
@@ -81,11 +127,25 @@ feature {NONE} -- Initialization
 						s /= Void and then s.count > 0
 					local
 						i: INTEGER
+						p: detachable PROCEDURE [ANY, TUPLE [detachable STRING]]
 					do
 						i := 123
-						s.append (i.out)
+						if attached i.out as l_agt_i_out then
+							p := agent (s3: detachable STRING)
+									local
+										pi: INTEGER
+									do
+										if attached s3 as p_out then
+											print (p_out)
+										end
+									end
+							s.append (l_agt_i_out)
+							p.call ([s])
+						end
 						i := s.count
 					end
+
+			a.call (["abc"])
 			from
 				j := 1
 			invariant
@@ -131,6 +191,13 @@ feature {NONE} -- Initialization
 			if attached {STRING} out then
 				print (out)
 			end
+			if attached out as s then
+				print (s)
+			end
+			if attached out as s then
+				print (s)
+			end
+
 		end
 
 	test_2
@@ -200,7 +267,9 @@ feature {NONE} -- Initialization
 				else
 					inspect i
 					when 1,2 then
-						l_text.to_lower
+						if l_text /= Void then
+							l_text.to_lower
+						end
 					when 3,4 then
 							-- Do nothing.
 					else
@@ -219,7 +288,7 @@ feature {NONE} -- Initialization
 		do
 			create s.make_empty
 			from i := 1 until i > 5 loop
-				if i = 1 then
+				if i = 1 and s /= Void then
 					s.append_character ('#')
 				else
 					s := Void

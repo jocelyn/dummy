@@ -1,3 +1,6 @@
 EIFGENs
 .svn/
-pop_checker/data/
+pop_checker/
+bricabrac/
+follow/
+esqlite/

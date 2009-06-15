@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-5-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-5-0 http://www.eiffel.com/developers/xml/configuration-1-5-0.xsd" name="sample" uuid="37CA15AD-00D4-4A04-8E60-C868281258D0">
+	<target name="sample">
+		<root cluster="sample" class="APPLICATION" feature="make"/>
+		<option profile="false" warning="true" full_class_checking="true">
+			<assertions precondition="true" postcondition="true" check="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<setting name="automatic_backup" value="true"/>
+		<setting name="check_for_catcall_at_runtime" value="false"/>
+		<setting name="check_for_void_target" value="true"/>
+		<setting name="console_application" value="true"/>
+		<setting name="exception_trace" value="true"/>
+		<setting name="inlining" value="true"/>
+		<setting name="inlining_size" value="0"/>
+		<setting name="multithreaded" value="true"/>
+		<setting name="old_verbatim_strings" value="true"/>
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf" readonly="false" use_application_options="true"/>
+		<assembly name="mscorlib" location="$ISE_DOTNET_FRAMEWORK\mscorlib.dll"/>
+		<cluster name="sample" location=".\">
+			<file_rule>
+				<exclude>/EIFGENs$</exclude>
+				<exclude>/.svn$</exclude>
+				<exclude>/.scv$</exclude>
+			</file_rule>
+		</cluster>
+		<!--
+		<tests name="test" location="."/>
+		<override name="dev" location="C:\work\Projects\bug\dev\" recursive="true"/>
+		-->
+	</target>
+	<target name="sample_compile_all" extends="sample">
+		<root all_classes="true"/>
+		<option profile="true" warning="true" syntax="obsolete">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+	</target>
+	<target name="sample_precomp" extends="sample">
+		<option profile="true" warning="true" syntax="obsolete">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<precompile name="precompile" location="$ISE_PRECOMP\base.ecf"/>
+	</target>
+	<target name="sample_dotnet" extends="sample">
+		<option profile="true" warning="true" syntax="obsolete">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<setting name="msil_classes_per_module" value="1"/>
+		<setting name="msil_generation" value="true"/>
+	</target>
+	<target name="sample_precomp_dotnet" extends="sample_dotnet">
+		<option profile="true" warning="true" syntax="obsolete">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<precompile name="precompile" location="$ISE_PRECOMP\base.ecf"/>
+	</target>
+	<target name="sample_normal">
+		<root cluster="sample" class="APPLICATION" feature="make"/>
+		<option profile="false" warning="true" full_class_checking="true">
+			<assertions precondition="true" postcondition="true" check="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<setting name="automatic_backup" value="true"/>
+		<setting name="check_for_catcall_at_runtime" value="false"/>
+		<setting name="check_for_void_target" value="true"/>
+		<setting name="console_application" value="true"/>
+		<setting name="exception_trace" value="true"/>
+		<setting name="inlining" value="true"/>
+		<setting name="inlining_size" value="0"/>
+		<setting name="multithreaded" value="true"/>
+		<setting name="old_verbatim_strings" value="true"/>
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf" readonly="false" use_application_options="true"/>
+		<assembly name="mscorlib" location="$ISE_DOTNET_FRAMEWORK\mscorlib.dll"/>
+		<cluster name="sample" location=".\">
+			<file_rule>
+				<exclude>/EIFGENs$</exclude>
+				<exclude>/.svn$</exclude>
+				<exclude>/.scv$</exclude>
+			</file_rule>
+		</cluster>
+		<!--
+		<tests name="test" location="."/>
+		<override name="dev" location="C:\work\Projects\bug\dev\" recursive="true"/>
+		-->
+	</target>
+	<target name="sample_compile_all2" extends="sample_compile_all">
+		<option profile="true" warning="true" syntax="obsolete">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+	</target>
+	<target name="sample_normal_dotnet" extends="sample_normal">
+		<option profile="true" warning="true" syntax="obsolete">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<setting name="msil_generation" value="true"/>
+	</target>
+	<target name="sample_mt" extends="sample_normal">
+		<option profile="true" warning="true" syntax="obsolete">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<setting name="multithreaded" value="true"/>
+		<external_object location="C:\work\Projects\bug\C\a.obj"/>
+	</target>
+	<target name="sample_all" extends="sample">
+		<root all_classes="true"/>
+		<option profile="true" warning="true" syntax="obsolete">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<!--
+		<override name="freeelks_override" location="C:\work\Projects\bug\override\" recursive="true"/>
+		-->
+	</target>
+</system>

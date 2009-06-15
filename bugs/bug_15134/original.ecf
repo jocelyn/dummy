@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-5-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-5-0 http://www.eiffel.com/developers/xml/configuration-1-5-0.xsd" name="test" uuid="E0437D3C-02A0-4D9B-8920-ACAC79A259EF">
+	<target name="test">
+		<root class="TEST" feature="make"/>
+		<option warning="true" full_class_checking="true" is_attached_by_default="true" void_safety="all" syntax="standard">
+			<assertions precondition="true"/>
+		</option>
+		<setting name="automatic_backup" value="true"/>
+		<setting name="inlining_size" value="100"/>
+		<!--
+		<precompile name="precompile" location="$ISE_EIFFEL\precomp\spec\$ISE_PLATFORM\base-safe.ecf"/>
+		-->
+		<library name="base-safe" location="$ISE_LIBRARY\library\base\base-safe.ecf"/>
+		<cluster name="root_cluster" location="root_cluster\">
+			<file_rule>
+				<exclude>/EIFGENs$</exclude>
+				<exclude>/.svn$</exclude>
+				<exclude>/CVS$</exclude>
+			</file_rule>
+		</cluster>
+	</target>
+</system>
